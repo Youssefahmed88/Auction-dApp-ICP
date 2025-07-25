@@ -1,3 +1,32 @@
+type AuctionError = variant {
+  InactiveItem;
+  UpdateError;
+  ItemNotFound;
+  AlreadyStopped;
+  NotOwner;
+  BidTooLow;
+};
+type CreateItem = record {
+  starting_price : float64;
+  name : text;
+  description : text;
+  is_active : bool;
+};
+type Item = record {
+  starting_price : float64;
+  owner : principal;
+  name : text;
+  description : text;
+  highest_bidder : opt principal;
+  is_active : bool;
+  new_owner : opt principal;
+  highest_bid : float64;
+};
+type Result = variant { Ok; Err : AuctionError };
 service : {
-    "greet": (text) -> (text) query;
+  bid_item : (nat64, float64) -> (Result);
+  create_item : (nat64, CreateItem) -> (opt Item);
+  end_item : (nat64) -> (Result);
+  get_item : (nat64) -> (opt Item) query;
+  list_items : () -> (vec Item) query;
 }
